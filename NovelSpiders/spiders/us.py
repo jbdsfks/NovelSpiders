@@ -52,4 +52,25 @@ class UsSprider(scrapy.Spider):
             content=content
         )
 
+        chapter_url = response.xpath('//a[@class="read"]/@href').extract_first()
+        yield scrapy.Request(chapter_url, callback=self.chapter_page)
+
+    def chapter_page(self, response):
+        chapters_list = response.xpath('//tr/td[@class="L"]/a/@href').extract()
+        for chapter in chapters_list:
+            yield scrapy.Request(chapter, callback=self.content_page)
+
+    def content_page(self, response):
+        id = response.url.split('/')[-1].split('.')[0]
+        novel_id = response.url.split('/')[-2]
+        name = response.xpath('//dl/dd/h1/text()').extract_first()
+        content = response.xpath('//dd[@id="contents"]').extract_first().split('id="contents">')[-1].split('</dd>')[0]
+        yield ChaptersItem(
+            id=id,
+            novel_id=novel_id,
+            name=name,
+            content=content
+        )
+
+
 

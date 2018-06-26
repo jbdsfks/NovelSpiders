@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime, Text
+from sqlalchemy import Column, String, Integer, DateTime, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 import datetime
@@ -39,3 +39,24 @@ class Novel(Base):
         self.length = new_novel.length
         self.last_update = new_novel.last_update
         self.content = new_novel.content
+
+
+class Chapter(Base):
+    __tablename__ = 'chapter'
+
+    id = Column('id', Integer, primary_key=True)
+    name = Column('name', String(64))
+    novel_id = Column('novel_id', Integer, ForeignKey('novel.id'))
+    content = Column('content', Text)
+
+    def change_item_to_cow(self, item):
+        self.id = int(item['id'])
+        self.name = item['name']
+        self.novel_id = int(item['novel_id'])
+        self.content = item['content']
+
+    def update_chapter(self, new_chapter):
+        self.id = new_chapter.id
+        self.novel_id = new_chapter.novel_id
+        self.name = new_chapter.name
+        self.content = new_chapter.content

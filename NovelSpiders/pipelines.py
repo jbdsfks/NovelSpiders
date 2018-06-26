@@ -6,13 +6,14 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 from utils.sql import Sql
+from items import NovelsItem, ChaptersItem
 
 
 class NovelspidersPipeline(object):
     def process_item(self, item, spider):
-        # spider.logger.info(item)
-        # print item
         sql = Sql()
-        # print item
-        sql.save_novel(item)
+        if isinstance(item, NovelsItem):
+            sql.save_novel(item)
+        elif isinstance(item, ChaptersItem):
+            sql.save_chapter(item)
         return item
