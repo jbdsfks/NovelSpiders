@@ -2,3 +2,6 @@ conda:
     scrapy
     mysql-python
     SQLAlchemy
+pip:
+    scrapyd
+    scrapyd-client

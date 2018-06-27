@@ -20,6 +20,7 @@ class NovelsItem(scrapy.Item):
     length = scrapy.Field()
     last_update = scrapy.Field()
     content = scrapy.Field()
+    url = scrapy.Field()
     pass
 
 
@@ -30,4 +31,5 @@ class ChaptersItem(scrapy.Item):
     novel_id = scrapy.Field()
     name = scrapy.Field()
     content = scrapy.Field()
+    url = scrapy.Field()
     pass

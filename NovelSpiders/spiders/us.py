@@ -6,6 +6,7 @@ from NovelSpiders.items import ChaptersItem
 
 class UsSprider(scrapy.Spider):
     name = "23us"
+    download_delay = 0.5
     allowed_domains = ["23us.so"]
     start_urls = [
         "http://www.23us.so/list/1_1.html",
@@ -40,6 +41,7 @@ class UsSprider(scrapy.Spider):
         last_update = table_td[5].xpath('text()').extract_first().split(u' ')[-1]
         background = response.xpath('//img[re:test(@src,".*/'+id+'/.*")]/@src').extract_first()
         content = response.xpath('//dd')[-1].xpath('p/text()').extract()[0]
+        url = response.url
         yield NovelsItem(
             id=id,
             title=title,
@@ -49,28 +51,42 @@ class UsSprider(scrapy.Spider):
             length=length,
             last_update=last_update,
             background=background,
-            content=content
+            content=content,
+            url=url
         )
 
         chapter_url = response.xpath('//a[@class="read"]/@href').extract_first()
         yield scrapy.Request(chapter_url, callback=self.chapter_page)
 
     def chapter_page(self, response):
-        chapters_list = response.xpath('//tr/td[@class="L"]/a/@href').extract()
+        # chapters_list = response.xpath('//tr/td[@class="L"]/a/@href').extract()
+        chapters_list = response.xpath('//tr/td[@class="L"]/a')
         for chapter in chapters_list:
-            yield scrapy.Request(chapter, callback=self.content_page)
-
-    def content_page(self, response):
-        id = response.url.split('/')[-1].split('.')[0]
-        novel_id = response.url.split('/')[-2]
-        name = response.xpath('//dl/dd/h1/text()').extract_first()
-        content = response.xpath('//dd[@id="contents"]').extract_first().split('id="contents">')[-1].split('</dd>')[0]
-        yield ChaptersItem(
-            id=id,
-            novel_id=novel_id,
-            name=name,
-            content=content
-        )
+            url = chapter.xpath('@href').extract_first()
+            name = chapter.xpath('text()').extract_first()
+            id = url.split('/')[-1].split('.')[0]
+            novel_id = url.split('/')[-2]
+            content = ' '
+            yield ChaptersItem(
+                id=id,
+                novel_id=novel_id,
+                name=name,
+                content=content,
+                url=url
+            )
+            # yield scrapy.Request(chapter, callback=self.content_page)
+    #
+    # def content_page(self, response):
+    #     id = response.url.split('/')[-1].split('.')[0]
+    #     novel_id = response.url.split('/')[-2]
+    #     name = response.xpath('//dl/dd/h1/text()').extract_first()
+    #     content = response.xpath('//dd[@id="contents"]').extract_first().split('id="contents">')[-1].split('</dd>')[0]
+    #     yield ChaptersItem(
+    #         id=id,
+    #         novel_id=novel_id,
+    #         name=name,
+    #         content=content
+    #     )
 
 
 

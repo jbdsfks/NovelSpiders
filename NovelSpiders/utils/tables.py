@@ -18,6 +18,7 @@ class Novel(Base):
     length = Column('length', Integer)
     last_update = Column('last_update', DateTime)
     content = Column('content', Text)
+    url = Column('url', String(128))
 
     def change_item_to_cow(self, item):
         self.id = int(item['id'])
@@ -29,6 +30,7 @@ class Novel(Base):
         self.length = int(item['length'])
         self.last_update = datetime.datetime.strptime(item['last_update'], "%Y-%m-%d %H:%M:%S")
         self.content = item['content']
+        self.url = item['url']
 
     def update_novel(self, new_novel):
         self.title = new_novel.title
@@ -39,6 +41,7 @@ class Novel(Base):
         self.length = new_novel.length
         self.last_update = new_novel.last_update
         self.content = new_novel.content
+        self.url = new_novel.url
 
 
 class Chapter(Base):
@@ -48,15 +51,18 @@ class Chapter(Base):
     name = Column('name', String(64))
     novel_id = Column('novel_id', Integer, ForeignKey('novel.id'))
     content = Column('content', Text)
+    url = Column('url', String(128))
 
     def change_item_to_cow(self, item):
         self.id = int(item['id'])
         self.name = item['name']
         self.novel_id = int(item['novel_id'])
         self.content = item['content']
+        self.url = item['url']
 
     def update_chapter(self, new_chapter):
         self.id = new_chapter.id
         self.novel_id = new_chapter.novel_id
         self.name = new_chapter.name
         self.content = new_chapter.content
+        self.url = new_chapter.url

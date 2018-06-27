@@ -12,7 +12,7 @@ class Sql():
         self.DBSession = sessionmaker(bind=self.engine)
         self.session = self.DBSession()
 
-    def save_novel(self, item):
+    def save_novel(self, item, spider):
 
         novel = Novel()
         novel.change_item_to_cow(item)
@@ -25,12 +25,12 @@ class Sql():
                 self.session.add(novel)
             self.session.commit()
         except Exception, e:
-            print e
+            spider.logger.error(e)
             self.session.rollback()
         finally:
             self.session.close()
 
-    def save_chapter(self, item):
+    def save_chapter(self, item, spider):
 
         chapter = Chapter()
         chapter.change_item_to_cow(item)
@@ -43,7 +43,7 @@ class Sql():
                 self.session.add(chapter)
             self.session.commit()
         except Exception, e:
-            print e
+            spider.logger.error(e)
             self.session.rollback()
         finally:
             self.session.close()

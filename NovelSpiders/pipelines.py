@@ -13,7 +13,7 @@ class NovelspidersPipeline(object):
     def process_item(self, item, spider):
         sql = Sql()
         if isinstance(item, NovelsItem):
-            sql.save_novel(item)
+            sql.save_novel(item, spider)
         elif isinstance(item, ChaptersItem):
-            sql.save_chapter(item)
+            sql.save_chapter(item, spider)
         return item
